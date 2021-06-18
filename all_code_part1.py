@@ -51,16 +51,16 @@ z=81
 matrix=np.zeros((z,z))        
 rs=np.arange(0,6481,81)  
 
-list=[]
+_list=[]
 for i in range (81):
     h=int(rs[i])
-    list.append(h)
+    _list.append(h)
 
  
 for n in range (81):
         for i in range (81):
             ciity[81*i+i]=0   #strings equal to zero       
-            matrix[n,i]=ciity[list[n]+i]
+            matrix[n,i]=ciity[_list[n]+i]
             ciity[81*i+i]=' ' #strings equal to string again  
             
 print(matrix) #MATRIX FİLE for only distances
@@ -69,7 +69,7 @@ print(matrix) #MATRIX FİLE for only distances
 
 #................................grapth with points............................
 
-work2=xlrd.open_workbook(r'xxx.xls')
+work2=xlrd.open_workbook(r'citycoordinates.xls')
 sheet2=work2.sheet_by_index(0)
 
 cordinate=[]
@@ -114,7 +114,7 @@ for i in range(80):
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 def get_coordinates():
-    work2=xlrd.open_workbook(r'xxx.xls')
+    work2=xlrd.open_workbook(r'citycoordinates.xls')
     sheet2=work2.sheet_by_index(0)
     
     cordinate=[]
@@ -251,12 +251,12 @@ try:
           i += 1
           print('generation', i, 'best performance %5.2f'% get_path_length(population[0]))
           #draws the best, ie, shortest path
-          draw_path(population[0])
+          #draw_path(population[0])
           
           #append the performance of the best individual to the performance list.
           performance_list.append(get_path_length(population[0]))
-          plt.plot(performance_list,'.-')
-          plt.show()
+          #plt.plot(performance_list,'.-')
+          #plt.show()
 #          
           population = multiply(population,10)
           if get_path_length(population[0]) < shortest_dist:

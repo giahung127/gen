@@ -6,22 +6,24 @@ Created on Sun May 12 19:38:14 2019
 """
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy.core.defchararray import index
 import xlrd
+from xlrd import sheet
 #------------------------------------------------------------------------------
 def get_coordinates():
-    work2=xlrd.open_workbook(r'xxx.xls')
+    work2=xlrd.open_workbook(r'citycoordinates.xls')
     sheet2=work2.sheet_by_index(0)
-    
+    numberOfCities = len(sheet2.col(0))-1
     cordinate=[]
-    for n in range (81):
+    for n in range (numberOfCities):
         for i in range(2):
             cor=sheet2.cell_value(n+1,i+2)
             cordinate.append(cor)               
-    n_city=81
+    n_city=numberOfCities
     matrix2=np.zeros((n_city,2))
 
-    tk=np.arange(0,161,2)
-    for n in range (81):
+    tk=np.arange(0,numberOfCities*2-1,2)
+    for n in range (numberOfCities):
             for i in range (2):
                 matrix2[n,i]=cordinate[tk[n]+i]
                       
@@ -32,7 +34,9 @@ def get_coordinates():
 
 def get_path(n):  #create random path(+Ankara)
     p = np.arange(n)
+   # p = np.delete(p,5)
     np.random.shuffle(p)
+    #p = np.insert(p,0,5)
     p = np.append(p, p[0])
     return p
 
@@ -128,9 +132,20 @@ def multiply(population,n):
     newpop = sort_population(newpop)
     return newpop    
 
+
+def getStartingPointIndex(name):
+    tempIndex = 0
+    for i in sheet2.col(1):
+        if i.value == name:
+            return tempIndex - 1
+        tempIndex += 1
+
 ###############################################################################
 ###############################################################################
 ###############################################################################
+
+startingPoint = 'Ankara'
+
 sheet2, x, y= get_coordinates()
 n= len(x)
 n_population=10
@@ -138,32 +153,38 @@ population  = create_initial_population(100)
 shortest_dist = get_path_length(population[0])
 shortest_path = population[0]
 
+
 #------------------------------------------------------------------------------
 performance_list = []
 i = 0
 try:
-      while True:
+      while i <= 6000:
           i += 1
           print('generation', i, 'best performance %5.2f'% get_path_length(population[0]))
           #draws the best, ie, shortest path
-          draw_path(population[0])
+          #draw_path(population[0])
           
           #append the performance of the best individual to the performance list.
           performance_list.append(get_path_length(population[0]))
-          plt.plot(performance_list,'.-')
-          plt.show()
+          #plt.plot(performance_list,'.-')
+          #plt.show()
 #          
           population = multiply(population,10)
           if get_path_length(population[0]) < shortest_dist:
                 shortest_dist = get_path_length(population[0])
                 shortest_path = population[0]
 except KeyboardInterrupt:
-      a = np.where(sheet2=='Ankara') # starting point
-      if shortest_path[0] != a[0]:
-            shortest_path = np.delete(shortest_path,0)
-            b = shortest_path[:int(np.where(shortest_path==a[0])[0])]
-            c = shortest_path[int(np.where(shortest_path==a[0])[0])+1:]
-            shortest_path = np.concatenate([np.array(a[0]), c, b, np.array(a[0])])
+      
+            
       pass
+startingPointIndex = getStartingPointIndex(startingPoint)
+if shortest_path[0] != startingPointIndex:
+    shortest_path = np.delete(shortest_path,0)
+    b = shortest_path[:int(np.where(shortest_path==startingPointIndex)[0])]
+    c = shortest_path[int(np.where(shortest_path==startingPointIndex)[0])+1:]
+    shortest_path = np.concatenate([[startingPointIndex], c, b, [startingPointIndex]])
+draw_path(population[0])
+plt.plot(performance_list,'.-')
+plt.show()
 print("best genes",(shortest_path), '\nwith min distance=',shortest_dist)
 

@@ -69,7 +69,7 @@ print(matrix) #MATRIX FİLE for only distances
 
 #................................grapth with points............................
 
-work2=xlrd.open_workbook(r'xxx.xls')
+work2=xlrd.open_workbook(r'citycoordinates.xls')
 sheet2=work2.sheet_by_index(0)
 
 cordinate=[]
